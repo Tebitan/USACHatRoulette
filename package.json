@@ -1,0 +1,10 @@
+{
+  "name": "USACHatRoulette",
+  "description": "Sistemas Distribuidos 2-2014. Esteban Abarca, Jose Cortes",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "4.x",
+    "opentok": "0.3.x",
+    "socket.io": "1.1.0"
+  }
+}
