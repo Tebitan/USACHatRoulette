@@ -11,8 +11,13 @@
 			height: 500px;
 			width: 300px;
 		}
+		#camaras{
+			height: 500px;
+			width: 300px;
+		}
 		#salaChat{
 			display: none;
+			margin-left: 5%;
 		}
 		#cuadroChat{
 			border: 1px;
@@ -31,7 +36,7 @@
 				margin-left: 35%;
 		}
 		#butonMenu{
-				margin-left: 25%;
+				margin-left: 15%;
 		}
 	</style>
 </head>
@@ -50,20 +55,36 @@
 	<!-- End -->
 	
 	<!-- Sala del chat: Texto, Video y Audio -->	
-	<div id="AreaCamaras" class="container row">
-		<div class="col-lg-4">
-			<span class="label label-info">Cámaras</span>
-			JOSE ESCONDEME CON JS
-			<div id="camaras" class="thumbnail">
-
-			</div>
-		</div>
-	</div>
 
 	<div id="salaChat" class="container row">
 		<!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
 		
+		<div class="col-lg-4">
+			<span class="label label-info">Cámaras</span>
+			<div id="camaras" class="thumbnail">
+				<div class="row" id="camaraExtrano">
+					<div class="col-lg-4">
+						<div class="thumbnail">
+						CAMARA EXTRAÑO
+						</div>
+					</div>
+				</div>
+				<div class="row" id="camaraPropia">
+					<div class="col-lg-4">
+						<div class="thumbnail">
+						CAMARA PROPIA
+						</div>
+					</div>
+				</div> 
+			</div>
+			<div class="btn-group" id="butonMenu">
+			  <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
+			  <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
+			  <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
+			</div>
+		</div>
 		
+
 		<!-- Apartado para el chat -->
 		<div class="col-lg-4">
 		<span class="label label-info">Chat</span>
@@ -85,14 +106,10 @@
 			<div id="usuarios" class="thumbnail">
 				<p>Usuarios En Linea</p>
 			</div>
-			<div class="btn-group-vertical" id="butonMenu">
-			  <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
-			  <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
-			  <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
-			</div>
 
 		</div>
 	</div>
+
 	<!-- END -->
 
 	<!-- JQuery -->
@@ -137,12 +154,13 @@
 					//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
 					if(data){
 						$('#nickIngreso').hide();//se oculta el registro
-						$('#salaChat').show();//se muestra la sala de chat			
+						$('#salaChat').show();//se muestra la sala de chat	
 						//document.getElementById("enviarMensaje").disabled = true;			
 					}
 					//si no, se muestra el error y se solicita un nuevo ingreso de usuario
 					else{
-						$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+						//$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+						window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
 					}
 				});
 				//Vaciamos el input donde se ingreso el nick
