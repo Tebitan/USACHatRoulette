@@ -2,59 +2,95 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Chat</title>
-	
+	<title>USACHatRoulette</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
 	<style>
 		#chat{
 			height: 500px;
+			width: 300px;
 		}
 		#salaChat{
 			display: none;
 		}
 		#cuadroChat{
-			float: left;
-			border: 1px #000 solid;
+			border: 1px;
+			border-top: 10%;
+			border-left: 40%;
+		}
+		#cuerpo{
+				background-image: url('http://i.imgur.com/BgGrCpY.jpg'); 
+			}
+
+		#nickForm{
+				margin-left: 40%;
+				margin-top: 10%;
+		}
+		#logo{
+				margin-left: 35%;
+		}
+		#butonMenu{
+				margin-left: 25%;
 		}
 	</style>
 </head>
-<body>
-	
+<body id="cuerpo">
+	<header>
+		<img id="logo" src="http://i.imgur.com/vwzyBnF.png" alt="USACHatRoulette">
+	</header>
 	<div id="nickIngreso">
-		<p>Ingrese su nombre de usuario:</p>
-		
 		<p id="nickError"></p>
 		<!-- Formulario de solicitud del nick -->
-		<form id="nickForm">
-			<input size="35" id="nickName"></input>
-			<input type="submit" value="Registrarse"></input>
+		<form class="navbar-form navbar-left" role="login" id="nickForm">
+			<input type="text" class="form-control" placeholder="Ingrese su nickname" id="nickName"></input>
+			<input type="submit" class="btn btn-default"></input>
 		</form>
 	</div>
 	<!-- End -->
 	
 	<!-- Sala del chat: Texto, Video y Audio -->	
+	<div id="AreaCamaras" class="container row">
+		<div class="col-lg-4">
+			<span class="label label-info">Cámaras</span>
+			JOSE ESCONDEME CON JS
+			<div id="camaras" class="thumbnail">
 
-	<div id="salaChat" >
+			</div>
+		</div>
+	</div>
+
+	<div id="salaChat" class="container row">
 		<!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
 		
-		<button id="botonIniciar"> Iniciar </button><button id="botonParar" disabled="true"> Fin </button>
+		
 		<!-- Apartado para el chat -->
-		<div id="cuadroChat" >
+		<div class="col-lg-4">
+		<span class="label label-info">Chat</span>
+		<div id="cuadroChat" class="thumbnail">
 			<!-- mensajes del chat -->
 			<div id="chat" ></div>
-
 			<!-- Formulario para el envio de mensajes -->
-			<form id="enviarMensaje" >
-				<input size="35" id="mensaje"></input>
-				<input type="submit" value="Enviar"></input>
+			<form id="enviarMensaje" class="navbar-form navbar-left" >
+				<input type="text" class="form-control" placeholder="Ingrese Mensaje" id="mensaje"></input>
+				<input type="submit" class="btn btn-default" value="Enviar"></input>
 			</form>
-
-			<button id="botonSiguiente" disabled="true">Siguiente</button>
+		</div>
 
 		</div>
 
 		<!-- Apartado para los usuarios -->
-		<div id="usuarios">
-			<p>Usuarios En Linea</p>
+		<div class="col-lg-2">
+			<span class="label label-info">Usuarios Conectados</span>
+			<div id="usuarios" class="thumbnail">
+				<p>Usuarios En Linea</p>
+			</div>
+			<div class="btn-group-vertical" id="butonMenu">
+			  <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
+			  <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
+			  <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
+			</div>
+
 		</div>
 	</div>
 	<!-- END -->
