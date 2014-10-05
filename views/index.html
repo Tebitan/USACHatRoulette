@@ -3,53 +3,55 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Chat</title>
-	<!-- Algo de estilo, hagalo en un archivo aparte porfavor -->
+	
 	<style>
 		#chat{
 			height: 500px;
 		}
-		#contentWrap{
+		#salaChat{
 			display: none;
 		}
-		#chatWrap{
+		#cuadroChat{
 			float: left;
 			border: 1px #000 solid;
 		}
 	</style>
 </head>
 <body>
-	<!-- La gracia es pedir un nombre de usuario antes de poder chatear -->
-	<div id="nickWrap">
+	
+	<div id="nickIngreso">
 		<p>Ingrese su nombre de usuario:</p>
-		<!-- Y si el nick ya esta siendo usado -->
+		
 		<p id="nickError"></p>
-		<!-- Recibimos el nick -->
-		<form id="setNick">
-			<input size="35" id="nickname"></input>
+		<!-- Formulario de solicitud del nick -->
+		<form id="nickForm">
+			<input size="35" id="nickName"></input>
 			<input type="submit" value="Registrarse"></input>
 		</form>
 	</div>
 	<!-- End -->
 	
-	<!-- Contenido -->	
+	<!-- Sala del chat: Texto, Video y Audio -->	
 
-	<div id="contentWrap">
+	<div id="salaChat" >
 		<!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
 		
-		<button id="botonIniciar"> Iniciar </button>
+		<button id="botonIniciar"> Iniciar </button><button id="botonParar" disabled="true"> Fin </button>
 		<!-- Apartado para el chat -->
-		<div id="chatWrap">
-			<!-- en este div iran los mensajes del chat -->
-			<div id="chat"></div>
+		<div id="cuadroChat" >
+			<!-- mensajes del chat -->
+			<div id="chat" ></div>
 
 			<!-- Formulario para el envio de mensajes -->
-			<form id="send-message">
-				<input size="35" id="message"></input>
+			<form id="enviarMensaje" >
+				<input size="35" id="mensaje"></input>
 				<input type="submit" value="Enviar"></input>
 			</form>
-			<button id="botonSiguiente">Siguiente</button>
+
+			<button id="botonSiguiente" disabled="true">Siguiente</button>
 
 		</div>
+
 		<!-- Apartado para los usuarios -->
 		<div id="usuarios">
 			<p>Usuarios En Linea</p>
@@ -57,70 +59,67 @@
 	</div>
 	<!-- END -->
 
-	<!-- Usaremos JQuery -->
+	<!-- JQuery -->
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<!-- Se debe llamar al modulo de socket.io -->
+	<!-- Modulo de socket.io -->
 	<script src="/socket.io/socket.io.js"></script>
 
-	<!-- Aca empieza la magia -->
+
 	<script>
-		/*
-		Esta funcion se ejecutara cuando toda la pagina termine de cargar, es automatico
-		*/
+		
+		//funcion se ejecuta cuando toda la pagina termine de cargar
 		$(function(){
 			//variable para conectarse al socket
 			var socket = io.connect();
 			//form para enviar el nick
-			var $formNick = $('#setNick');
+			var $formUser = $('#nickForm');
 			//por si hay nick repetido
 			var $nickError = $('#nickError');
 			//el nick en si
-			var $nick = $('#nickname');
+			var $nick = $('#nickName');
 			//usuarios
 			var $usuarios = $('#usuarios');
 			//form para enviar el mensaje 
-			var $formMensaje = $('#send-message');
+			var $formMensaje = $('#enviarMensaje');
 			//este es el input, el mensaje en si
-			var $mensaje = $('#message');
+			var $mensaje = $('#mensaje');
 			//chat, es la variable donde se irá mostrando el chat
 			var $chat = $('#chat');
 			//boton siguiente
-			var $siguiente = $('#botonSiguiente');
+			//var $siguiente = $('#botonSiguiente');
 			//boton iniciar
-			var $iniciarChat = $('#botonIniciar');
+			//var $iniciarChat = $('#botonIniciar');
 				
 			//cada vez que se haga un submit de un nick, lo enviaremos al servidor
-			$formNick.submit(function(e){
+			$formUser.submit(function(e){				
+
 				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
 				e.preventDefault();
-				/*
-					hacemos un emit bajo el alias new user, aca hacemos algo distinto
-					si el nick es valido, escondemos la parte de ingreso de nick y 
-					mostramos la ventana del chat
-					OJO! Es la misma vista!
-				*/
-				socket.emit('new user', $nick.val(), function(data){
+				
+				//emitimos un mensaje al servidor de que hay un nuevo usuario
+				socket.emit('nuevo usuario', $nick.val(), function(data){
 					//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
 					if(data){
-						$('#nickWrap').hide();
-						$('#contentWrap').show();
+						$('#nickIngreso').hide();//se oculta el registro
+						$('#salaChat').show();//se muestra la sala de chat			
+						//document.getElementById("enviarMensaje").disabled = true;			
 					}
-					//Si no, mostramos mensaje de error al usuario
+					//si no, se muestra el error y se solicita un nuevo ingreso de usuario
 					else{
-						$nickError.html('Nombre de usuario ya existe, intenta con otro.');
+						$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
 					}
 				});
-				//Vaciamos el contenido de nick
-				$nick.val('');//?
+				//Vaciamos el input donde se ingreso el nick
+				$nick.val('');
 			});
 
-			/*Aca es donde mostramos los usuarios conectados simplemente iteramos por el arreglo de usuarios 			*/
-			socket.on('usernames', function(data){
+			//Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
+			socket.on('nicks', function(data){
 				var html = '';
 				for(i=0; i<data.length; i++){
 					html += data[i]+'<br/>'
 				}
-				$usuarios.html(html);
+				$usuarios.html(html); //se guardan en el apartado dejado para los usuarios en el html
 
 			});
 
@@ -129,32 +128,53 @@
 
 				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
 				e.preventDefault();
-				/*Hacemos un emit por medio nuestro socket, envia un evento al servidor en este caso se llama 'send message'
-				  y envia el contenido de mensaje		*/
-				socket.emit('send message', $mensaje.val());				
-				//limpiamos el contenido
+
+				//se emite un mensaje al servidor indicando el envio de un nuevo mensaje, se envia el mensaje tambien
+				socket.emit('enviar mensaje', $mensaje.val());				
+				//limpiamos el contenido ingresado
 				$mensaje.val('');
 			});
 
-			/* recibimos el mensaje del servidor, estamos usando el mismo alias que el nos envio: 'new message'
-			*/
-			socket.on('new message', function(data){
-				/*	hacemos un append para no perder los mensajes anteriores y mostramos el nick y el mensaje
-				*/
+			//se recibe un mensaje del servidor indicando que se recibe un nuevo mensaje
+			
+			socket.on('nuevo mensaje', function(data){
+				//se muestra el mensaje recibido en la ventana junto con el nich del usuario que lo envio
 				$chat.append('<b>'+data.nick+':</b>'+data.msg+"<br/>");
 			});
 
+			//si se hace click para iniciar la ruleta de chat
 			document.getElementById("botonIniciar").onclick = function(){
-				$chat.append("Nuevo chat iniciado");
+
+				socket.emit('nuevo chat', $nick.val(), function(data){
+
+					if(data){
+
+					}else{
+						
+					}
+				});
+
+				document.getElementById("botonIniciar").disabled = true;
+				document.getElementById("botonParar").disabled = false;
+				document.getElementById("botonSiguiente").disabled = false;
+			}
+			//si se hace click para parar la ruleta de chat
+			document.getElementById("botonParar").onclick = function(){
+
+				socket.emit('parar chat');
+
+				document.getElementById("botonIniciar").disabled = false;
+				document.getElementById("botonParar").disabled = true;
+				document.getElementById("botonSiguiente").disabled = true;
+			}
+			//si se hace click para cambiar de pareja de chat
+			document.getElementById("botonSiguiente").onclick = function(){
+
+				socket.emit('cambiar chat');
+
 			}
 
-			$iniciarChat.onClick(function(data){				
-
-				socket.emit('new chat', $mensaje.val());				
-				
-			});
-
-			socket.on('mensaje inicio', function(data){
+			socket.on('listo chat', function(data){
 
 				$chat.append("Nuevo chat iniciado");
 			});

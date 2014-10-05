@@ -1,7 +1,8 @@
 
-conectados = [];	
-con_pareja = [];
-sin_pareja = [];
+conectados 	= [];	
+con_pareja 	= [];
+sin_pareja 	= [];
+rooms 	   	= [];
 
 exports.start = function(http){	
 
@@ -10,14 +11,16 @@ exports.start = function(http){
 	io.sockets.on('connection', function(socket){ //Cada vez que un usuario se conecte					
 			
 		//updateConectados(socket);
+
 		inicio_sesion(socket);
+		iniciar_chat(socket);
 		mensaje(socket);
 		cerrar_sesion(socket);
 	});	
 
 	//Esta función realiza el proceso de inicio de sesion de un cliente por parte del servidor
 	function inicio_sesion(socket){
-		socket.on('new user', function(data, callback){
+		socket.on('nuevo usuario', function(data, callback){
 		
 			if (conectados.indexOf(data) != -1){ // Si el nick ya existe se envia false al cliente
 				callback(false);
@@ -30,6 +33,8 @@ exports.start = function(http){
 				socket.nickname = data;
 				// Agregamos al usuario al arreglo de conectados
 				conectados.push(socket.nickname);
+				//... a la de sin_pareja
+				sin_pareja.push(socket.nickname);
 				//enviamos el areglo actualizado de usuarios conectados
 				updateConectados();
 			}
@@ -37,21 +42,31 @@ exports.start = function(http){
 	}
 
 	function iniciar_chat(socket){
-		socket.on('new chat', function(data){
-			io.sockets.emit('mensaje inicio', conectados);
+		socket.on('nuevo chat', function(data, callback){
+			
+			for(var i = 0: i < sin_pareja.length; i++){
+
+				if(sin_pareja[i] != socket.nickname){
+																														
+				}
+			}
+
+			io.sockets.emit('listo chat', conectados);
+
+
 		});
 	}
 
 	//Esta función hace emit con los usuarios conectados, de esta forma el cliente los recibe 	
 	function updateConectados(){
-		io.sockets.emit('usernames', conectados);
+		io.sockets.emit('nicks', conectados);
 	}
 
 	//Esta funcion recibe el mensaje enviado desde el cliente	
 	function mensaje(socket){
-		socket.on('send message', function(data){
+		socket.on('enviar mensaje', function(data){
 			//	
-			io.sockets.emit('new message', {msg: data, nick: socket.nickname});
+			io.sockets.emit('nuevo mensaje', {msg: data, nick: socket.nickname});
 			//socket.broadcast.emit('new message', data);
 		});
 	}
