@@ -1,231 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>USACHatRoulette</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <meta charset="UTF-8">
+  <title>USACHatRoulette</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-	<style>
-		#chat{
-			height: 500px;
-			width: 300px;
-		}
-		#camaras{
-			height: 500px;
-			width: 300px;
-		}
-		#salaChat{
-			display: none;
-		}
-		#cuadroChat{
-			border: 1px;
-			border-top: 10%;
-			border-left: 40%;
-		}
-		#cuerpo{
-				background-image: url('http://i.imgur.com/BgGrCpY.jpg'); 
-			}
+  <style>
+    #chat{
+      height: 500px;
+      width: 300px;
+      overflow-y: scroll; 
+    }
+    #camaras{
+      height: 500px;
+      width: 300px;
+    }
+    #salaChat{
+      display: none;
+    }
+    #cuadroChat{
+      border: 1px;
+      border-top: 10%;
+      border-left: 40%;
+    }
+    #cuerpo{
+        background-image: url('http://i.imgur.com/BgGrCpY.jpg'); 
+      }
 
-		#nickForm{
-				margin-left: 40%;
-				margin-top: 10%;
-		}
-		#logo{
-				margin-left: 35%;
-		}
-		#butonMenu{
-				margin-left: 15%;
-		}
-	</style>
+    #nickForm{
+        margin-left: 40%;
+        margin-top: 10%;
+    }
+    #logo{
+        margin-left: 35%;
+    }
+    #butonMenu{
+        margin-left: 15%;
+    }
+  </style>
 </head>
+
 <body id="cuerpo">
-	<header>
-		<img id="logo" src="http://i.imgur.com/vwzyBnF.png" alt="USACHatRoulette">
-	</header>
-	<div id="nickIngreso">
-		<p id="nickError"></p>
-		<!-- Formulario de solicitud del nick -->
-		<form class="navbar-form navbar-left" role="login" id="nickForm">
-			<input type="text" class="form-control" placeholder="Ingrese su nickname" id="nickName"></input>
-			<input type="submit" class="btn btn-default"></input>
-		</form>
-	</div>
-	<!-- End -->
-	
-	<!-- Sala del chat: Texto, Video y Audio -->	
-	
 
-	<div id="salaChat" class="container row">
-		<!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
-		
-		<div class="col-lg-4">
-			<span class="label label-info">Cámaras</span>
-			<div id="camaras" class="thumbnail">
+  <header>
+    <img id="logo" src="http://i.imgur.com/vwzyBnF.png" alt="USACHatRoulette">
+  </header>
 
-			</div>
-			<div class="btn-group" id="butonMenu">
-			  <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
-			  <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
-			  <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
-			</div>
-		</div>
+  <div id="nickIngreso">
+    <p id="nickError"></p>
+    <!-- Formulario de solicitud del nick -->
+    <form class="navbar-form navbar-left" role="login" id="nickForm">
+      <input type="text" class="form-control" placeholder="Ingrese su nickname" id="nickName"></input>
+      <input type="submit" class="btn btn-default"></input>
+    </form>
+  </div>
+  <!-- End -->
+  
+  <!-- Sala del chat: Texto, Video y Audio -->  
+  
 
-		<!-- Apartado para el chat -->
-		<div class="col-lg-4">
-		<span class="label label-info">Chat</span>
-		<div id="cuadroChat" class="thumbnail">
-			<!-- mensajes del chat -->
-			<div id="chat" ></div>
-			<!-- Formulario para el envio de mensajes -->
-			<form id="enviarMensaje" class="navbar-form navbar-left" >
-				<input type="text" class="form-control" placeholder="Ingrese Mensaje" id="mensaje"></input>
-				<input type="submit" class="btn btn-default" value="Enviar"></input>
-			</form>
-		</div>
+  <div id="salaChat" class="container row">
+    <!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
+    
+    <div class="col-lg-4">
+      <span class="label label-info">Cámaras</span>
+      <div id="camaras" class="thumbnail">
+        <div id="camaraAjena">
+        </div>
+        <div id="camaraPropia">
+        </div>
+      </div>
+      <div class="btn-group" id="butonMenu">
+        <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
+        <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
+        <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
+      </div>
+    </div>
 
-		</div>
+    <!-- Apartado para el chat -->
+    <div class="col-lg-4">
+    <span class="label label-info">Chat</span>
+    <div id="cuadroChat" class="thumbnail">
+      <!-- mensajes del chat -->
 
-		<!-- Apartado para los usuarios -->
-		<div class="col-lg-2">
-			<span class="label label-info">Usuarios Conectados</span>
-			<div id="usuarios" class="thumbnail">
-				<p>Usuarios En Linea</p>
-			</div>
-		</div>
-	</div>
-	<!-- END -->
+      <div id="chat"></div>
 
-	<!-- JQuery -->
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<!-- Modulo de socket.io -->
-	<script src="/socket.io/socket.io.js"></script>
+      <!-- Formulario para el envio de mensajes -->
+      <form id="enviarMensaje" class="navbar-form navbar-left" >
+        <input type="text" class="form-control" placeholder="Ingrese Mensaje" id="mensaje"></input>
+        <input type="submit" class="btn btn-default" value="Enviar"></input>
+      </form>
+    </div>
+
+    </div>
+
+    <!-- Apartado para los usuarios -->
+    <div class="col-lg-2">
+      <span class="label label-info">Usuarios Conectados</span>
+      <div id="usuarios" class="thumbnail">
+        <p>Usuarios En Linea</p>
+      </div>
+    </div>
+  </div>
+  <!-- END -->
+
+  <!-- JQuery -->
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <!-- Modulo de socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
 
 
-	<script>
-		
-		//funcion se ejecuta cuando toda la pagina termine de cargar
-		$(function(){
-			//variable para conectarse al socket
-			var socket = io.connect();
-			//form para enviar el nick
-			var $formUser = $('#nickForm');
-			//por si hay nick repetido
-			var $nickError = $('#nickError');
-			//el nick en si
-			var $nick = $('#nickName');
-			//usuarios
-			var $usuarios = $('#usuarios');
-			//form para enviar el mensaje 
-			var $formMensaje = $('#enviarMensaje');
-			//este es el input, el mensaje en si
-			var $mensaje = $('#mensaje');
-			//chat, es la variable donde se irá mostrando el chat
-			var $chat = $('#chat');
+  <script>
+    
+    //funcion se ejecuta cuando toda la pagina termine de cargar
+    $(function(){
+      //variable para conectarse al socket
+      var socket = io.connect();
+      //form para enviar el nick
+      var $formUser = $('#nickForm');
+      //por si hay nick repetido
+      var $nickError = $('#nickError');
+      //el nick en si
+      var $nick = $('#nickName');
+      //usuarios
+      var $usuarios = $('#usuarios');
+      //form para enviar el mensaje 
+      var $formMensaje = $('#enviarMensaje');
+      //este es el input, el mensaje en si
+      var $mensaje = $('#mensaje');
+      //chat, es la variable donde se irá mostrando el chat
+      var $chat = $('#chat');
 
-			var nick_UltimaPareja = null;
-			//boton siguiente
-			//var $siguiente = $('#botonSiguiente');
-			//boton iniciar
-			//var $iniciarChat = $('#botonIniciar');
-				
-			//cada vez que se haga un submit de un nick, lo enviaremos al servidor
-			$formUser.submit(function(e){				
+      var nick_UltimaPareja = null;
+      //boton siguiente
+      //var $siguiente = $('#botonSiguiente');
+      //boton iniciar
+      //var $iniciarChat = $('#botonIniciar');
+        
+      //cada vez que se haga un submit de un nick, lo enviaremos al servidor
+      $formUser.submit(function(e){       
 
-				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
-				e.preventDefault();
+        //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+        e.preventDefault();
 
-				if($nick.val()==""){
-					//Validar un ingreso vacio.
-					window.alert("Debe ingresar nombre de usuario.");
-				}
-				else{
-					//emitimos un mensaje al servidor de que hay un nuevo usuario
-					socket.emit('nuevo usuario', $nick.val(), function(data){
-						//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
-						if(data){
-							$('#nickIngreso').hide();//se oculta el registro
-							$('#salaChat').show();//se muestra la sala de chat	
-								//document.getElementById("enviarMensaje").disabled = true;		
-						}
-						//si no, se muestra el error y se solicita un nuevo ingreso de usuario
-						else{
-							//$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
-							window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
-						}
-					});
-					//Vaciamos el input donde se ingreso el nick
-					$nick.val('');
-				}
-			});
+        if($nick.val()==""){
+          //Validar un ingreso vacio.
+          window.alert("Debe ingresar nombre de usuario.");
+        }
+        else{
+          //emitimos un mensaje al servidor de que hay un nuevo usuario
+          socket.emit('nuevo usuario', $nick.val(), function(data){
+            //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+            if(data){
+              $('#nickIngreso').hide();//se oculta el registro
+              $('#salaChat').show();//se muestra la sala de chat  
+                //document.getElementById("enviarMensaje").disabled = true;   
+            }
+            //si no, se muestra el error y se solicita un nuevo ingreso de usuario
+            else{
+              //$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+              window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
+            }
+          });
+          //Vaciamos el input donde se ingreso el nick
+          $nick.val('');
+        }
+      });
 
-			//Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
-			socket.on('nicks', function(data){
-				var html = '';
-				for(i=0; i<data.length; i++){
-					html += data[i]+'<br/>'
-				}
-				$usuarios.html(html); //se guardan en el apartado dejado para los usuarios en el html
+      //Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
+      socket.on('nicks', function(data){
+        var html = '';
+        for(i=0; i<data.length; i++){
+          html += data[i]+'<br/>'
+        }
+        $usuarios.html(html); //se guardan en el apartado dejado para los usuarios en el html
 
-			});
+      });
 
-			// cada vez que se haga un submit de un mensaje, lo enviaremos al servidor
-			$formMensaje.submit(function(e){
+      // cada vez que se haga un submit de un mensaje, lo enviaremos al servidor
+      $formMensaje.submit(function(e){
 
-				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
-				e.preventDefault();
+        //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+        e.preventDefault();
 
-				//se emite un mensaje al servidor indicando el envio de un nuevo mensaje, se envia el mensaje tambien
-				socket.emit('enviar mensaje', $mensaje.val());				
-				//limpiamos el contenido ingresado
-				$mensaje.val('');
-			});
+        //se emite un mensaje al servidor indicando el envio de un nuevo mensaje, se envia el mensaje tambien
+        socket.emit('enviar mensaje', $mensaje.val());        
+        //limpiamos el contenido ingresado
+        $mensaje.val('');
+      });
 
-			//se recibe un mensaje del servidor indicando que se recibe un nuevo mensaje
-			
-			socket.on('nuevo mensaje', function(data){
-				//se muestra el mensaje recibido en la ventana junto con el nich del usuario que lo envio
-				$chat.append('<b>'+data.nick+':</b>'+data.msg+"<br/>");
-			});
+      //se recibe un mensaje del servidor indicando que se recibe un nuevo mensaje
+      
+      socket.on('nuevo mensaje', function(data){
+        //se muestra el mensaje recibido en la ventana junto con el nich del usuario que lo envio
+        $chat.append('<b>'+data.nick+':</b>'+data.msg+"<br/>");
+      });
 
-			//si se hace click para iniciar la ruleta de chat
-			document.getElementById("botonIniciar").onclick = function(){
+      //si se hace click para iniciar la ruleta de chat
+      document.getElementById("botonIniciar").onclick = function(){
 
-				socket.emit('nuevo chat', nick_UltimaPareja, function(data){
 
-					if(data){
+        socket.emit('nuevo chat', nick_UltimaPareja, function(data){
 
-					}else{
+          if(data){
 
-					}
-				});
+          }else{
 
-				document.getElementById("botonIniciar").disabled = true;
-				document.getElementById("botonParar").disabled = false;
-				document.getElementById("botonSiguiente").disabled = false;
-			}
+          }
+        });
 
-			//si se hace click para parar la ruleta de chat
-			document.getElementById("botonParar").onclick = function(){
+        document.getElementById("botonIniciar").disabled = true;
+        document.getElementById("botonParar").disabled = false;
+        document.getElementById("botonSiguiente").disabled = false;
+      }
 
-				socket.emit('parar chat');
+      //si se hace click para parar la ruleta de chat
+      document.getElementById("botonParar").onclick = function(){
 
-				document.getElementById("botonIniciar").disabled = false;
-				document.getElementById("botonParar").disabled = true;
-				document.getElementById("botonSiguiente").disabled = true;
-			}
-			//si se hace click para cambiar de pareja de chat
-			document.getElementById("botonSiguiente").onclick = function(){
+        socket.emit('parar chat');
 
-				socket.emit('cambiar chat');
+        document.getElementById("botonIniciar").disabled = false;
+        document.getElementById("botonParar").disabled = true;
+        document.getElementById("botonSiguiente").disabled = true;
+      }
+      //si se hace click para cambiar de pareja de chat
+      document.getElementById("botonSiguiente").onclick = function(){
 
-			}
+        socket.emit('cambiar chat');
 
-			socket.on('listo chat', function(data){
+      }
 
-				$chat.append("Nuevo chat iniciado");
-			});
-		});		
-	</script>
+      socket.on('listo chat', function(data){
+        $chat.append("Nuevo chat iniciado.\n");
+      });
+    });   
+  </script>
 </body>
 </html>
