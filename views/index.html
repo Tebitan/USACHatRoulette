@@ -133,22 +133,29 @@
 
 				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
 				e.preventDefault();
-				
-				//emitimos un mensaje al servidor de que hay un nuevo usuario
-				socket.emit('nuevo usuario', $nick.val(), function(data){
-					//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
-					if(data){
-						$('#nickIngreso').hide();//se oculta el registro
-						$('#salaChat').show();//se muestra la sala de chat			
-						//document.getElementById("enviarMensaje").disabled = true;			
-					}
-					//si no, se muestra el error y se solicita un nuevo ingreso de usuario
-					else{
-						$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
-					}
-				});
-				//Vaciamos el input donde se ingreso el nick
-				$nick.val('');
+
+				if($nick.val()==""){
+					//Validar un ingreso vacio.
+					window.alert("Debe ingresar nombre de usuario.");
+				}
+				else{
+					//emitimos un mensaje al servidor de que hay un nuevo usuario
+					socket.emit('nuevo usuario', $nick.val(), function(data){
+						//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+						if(data){
+							$('#nickIngreso').hide();//se oculta el registro
+							$('#salaChat').show();//se muestra la sala de chat	
+								//document.getElementById("enviarMensaje").disabled = true;		
+						}
+						//si no, se muestra el error y se solicita un nuevo ingreso de usuario
+						else{
+							//$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+							window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
+						}
+					});
+					//Vaciamos el input donde se ingreso el nick
+					$nick.val('');
+				}
 			});
 
 			//Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
@@ -218,7 +225,6 @@
 				$chat.append("Nuevo chat iniciado");
 			});
 		});		
-		
 	</script>
 </body>
 </html>
