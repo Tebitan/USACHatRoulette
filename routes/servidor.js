@@ -44,11 +44,18 @@ exports.start = function(http){
 	function iniciar_chat(socket){
 		socket.on('nuevo chat', function(data, callback){
 			
-			for(var i = 0: i < sin_pareja.length; i++){
+			for(var i = 0; i < sin_pareja.length; i++){
 
-				if(sin_pareja[i] != socket.nickname){
-																														
-				}
+				if(sin_pareja[i] != socket.nickname && sin_pareja[i]!= data ){
+					
+					var pareja = sin_pareja[i];
+					sin_pareja.splice(i,1);
+					sin_pareja.splice(sin_pareja.indexOf(socket.nickname),1);
+					
+					rooms.push(socket);
+					
+					break;
+				}				
 			}
 
 			io.sockets.emit('listo chat', conectados);

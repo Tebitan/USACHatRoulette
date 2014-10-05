@@ -85,6 +85,8 @@
 			var $mensaje = $('#mensaje');
 			//chat, es la variable donde se irá mostrando el chat
 			var $chat = $('#chat');
+
+			var nick_UltimaPareja = null;
 			//boton siguiente
 			//var $siguiente = $('#botonSiguiente');
 			//boton iniciar
@@ -145,12 +147,12 @@
 			//si se hace click para iniciar la ruleta de chat
 			document.getElementById("botonIniciar").onclick = function(){
 
-				socket.emit('nuevo chat', $nick.val(), function(data){
+				socket.emit('nuevo chat', nick_UltimaPareja, function(data){
 
 					if(data){
 
 					}else{
-						
+
 					}
 				});
 
@@ -158,6 +160,7 @@
 				document.getElementById("botonParar").disabled = false;
 				document.getElementById("botonSiguiente").disabled = false;
 			}
+
 			//si se hace click para parar la ruleta de chat
 			document.getElementById("botonParar").onclick = function(){
 
