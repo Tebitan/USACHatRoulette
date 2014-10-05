@@ -23,4 +23,6 @@ app.get("/", function(req, res){
 
 servidor.start(server);
 
+console.log("Servidor ejecutándose en: Localhost:3000.");
+
 
