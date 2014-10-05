@@ -144,7 +144,13 @@
 					}
 					//si no, se muestra el error y se solicita un nuevo ingreso de usuario
 					else{
-						$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+
+						if($nick.val() == "" ){
+							$nickError.html('Ingrese un nombre de usuario.');								
+						}							
+						else{
+							$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+						}
 					}
 				});
 				//Vaciamos el input donde se ingreso el nick
