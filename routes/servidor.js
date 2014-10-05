@@ -22,7 +22,7 @@ exports.start = function(http){
 	function inicio_sesion(socket){
 		socket.on('nuevo usuario', function(data, callback){
 		
-			if (conectados.indexOf(data) != -1 || data ==""){ // Si el nick ya existe se envia false al cliente
+			if (conectados.indexOf(data) != -1 ){ // Si el nick ya existe se envia false al cliente
 				callback(false);
 			}
 			// Si no
