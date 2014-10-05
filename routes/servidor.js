@@ -44,7 +44,7 @@ exports.start = function(http){
 	function iniciar_chat(socket){
 		socket.on('nuevo chat', function(data, callback){
 			
-			for(var i = 0: i < sin_pareja.length; i++){
+			for(var i = 0; i < sin_pareja.length; i++){
 
 				if(sin_pareja[i] != socket.nickname){
 																														
