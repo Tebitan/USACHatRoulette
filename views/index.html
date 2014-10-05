@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Chat</title>
-	
+	<title>USACHatRoulette</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
 	<style>
 		#chat{
 			height: 500px;
@@ -15,18 +17,24 @@
 			float: left;
 			border: 1px #000 solid;
 		}
+		#cuerpo{
+				background-image: url('http://i.imgur.com/BgGrCpY.jpg'); 
+			}
+
+		#nickForm{
+				margin-left: 40%;
+				margin-top: 10%;
+		}
 	</style>
 </head>
-<body>
+<body id="cuerpo">
 	
 	<div id="nickIngreso">
-		<p>Ingrese su nombre de usuario:</p>
-		
 		<p id="nickError"></p>
 		<!-- Formulario de solicitud del nick -->
-		<form id="nickForm">
-			<input size="35" id="nickName"></input>
-			<input type="submit" value="Registrarse"></input>
+		<form class="navbar-form navbar-left" role="login" id="nickForm">
+			<input type="text" class="form-control" placeholder="Ingrese su nickname" id="nickName"></input>
+			<input type="submit" class="btn btn-default"></input>
 		</form>
 	</div>
 	<!-- End -->
