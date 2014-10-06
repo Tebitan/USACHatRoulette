@@ -3,7 +3,8 @@ var express = require('express'),                 //hacemos el require a express
     app     = express(),                          //iniciamos nuestra aplicacion con express
     server  = require('http').createServer(app),  //creamos un servidor http, necesario para usar socket.io
     io      = require('socket.io').listen(server),//socket que usaremos
-    rutas   = require('./routes'),
+    uuid = require('node-uuid'),
+    rutas   = require('./routes'),    
     servidor = require('./routes/servidor');
 
 
@@ -23,6 +24,5 @@ app.get("/", function(req, res){
 
 servidor.start(server);
 
-console.log("Servidor ejecutándose en: Localhost:3000.");
 
 

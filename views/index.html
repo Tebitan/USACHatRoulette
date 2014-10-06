@@ -5,9 +5,8 @@
   <title>USACHatRoulette</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-
   <style>
-    #chat{
+  	#chat{
       height: 500px;
       width: 300px;
       overflow-y: scroll; 
@@ -38,7 +37,13 @@
     #butonMenu{
         margin-left: 15%;
     }
+    #TODO{
+    	margin-left: 15%;
+    }
+
   </style>
+
+    
 </head>
 
 <body id="cuerpo">
@@ -59,24 +64,28 @@
   
   <!-- Sala del chat: Texto, Video y Audio -->  
   
-
+<div id="TODO">
   <div id="salaChat" class="container row">
     <!--<button id="botonIniciar" type="button">Iniciar</button><button id="botonParar" type="button">Parar</button>-->
-    
-    <div class="col-lg-4">
-      <span class="label label-info">Cámaras</span>
-      <div id="camaras" class="thumbnail">
-        <div id="camaraAjena">
-        </div>
-        <div id="camaraPropia">
-        </div>
-      </div>
-      <div class="btn-group" id="butonMenu">
-        <button id="botonIniciar" type="button" class="btn btn-default">Iniciar</button>
-        <button id="botonSiguiente" type="button" disabled="true" class="btn btn-default">Siguiente</button>
-        <button id="botonParar" type="button" disabled="true" class="btn btn-default">Fin</button>
-      </div>
-    </div>
+    	<!-- Columna para mostrar las cámaras -->
+          <div class="col-lg-4">
+          	<!-- cámara compañero -->
+            <span class="label label-info">Cámara Ajena</span>
+            <div class="thumbnail" id="camaraAjena">
+                <div id='subscribersDiv' width="320" height="200"></div>
+            </div>
+            <!-- cámara cpropia -->
+            <span class="label label-info">Cámara Propia</span>
+            <div class="thumbnail" id="camaraPropia">
+                <div id='myPublisherDiv' width="320" height="200"></div>
+            </div>
+            <!-- botones de control -->
+            <div class="btn-group" id="butonMenu">
+              <button id="botonIniciar" type="button submit" class="btn btn-default">Iniciar</button>
+              <button id="botonSiguiente" type="button submit" disabled="true" class="btn btn-default">Siguiente</button>
+              <button id="botonParar" type="button submit" disabled="true" class="btn btn-default">Fin</button>
+            </div>
+          </div>
 
     <!-- Apartado para el chat -->
     <div class="col-lg-4">
@@ -89,7 +98,7 @@
       <!-- Formulario para el envio de mensajes -->
       <form id="enviarMensaje" class="navbar-form navbar-left" >
         <input type="text" class="form-control" placeholder="Ingrese Mensaje" id="mensaje"></input>
-        <input type="submit" class="btn btn-default" value="Enviar"></input>
+        <input type="submit" class="btn btn-default" value="Enviar" disabled="true" id="sendmessage"></input>
       </form>
     </div>
 
@@ -103,138 +112,207 @@
       </div>
     </div>
   </div>
+ </div>
   <!-- END -->
 
   <!-- JQuery -->
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   <!-- Modulo de socket.io -->
   <script src="/socket.io/socket.io.js"></script>
+  <!-- Modulo de opentok -->
+  <script src='//static.opentok.com/webrtc/v2.2/js/opentok.min.js'></script> 
+	<script>
+		
+		//funcion se ejecuta cuando toda la pagina termine de cargar
+		$(function(){
+			//variable para conectarse al socket
+			var socket = io.connect();
+			//form para enviar el nick
+			var $formUser = $('#nickForm');
+			//por si hay nick repetido
+			var $nickError = $('#nickError');
+			//el nick en si
+			var $nick = $('#nickName');
+			//usuarios
+			var $usuarios = $('#usuarios');
+			//form para enviar el mensaje 
+			var $formMensaje = $('#enviarMensaje');
+			//este es el input, el mensaje en si
+			var $mensaje = $('#mensaje');
+			//chat, es la variable donde se irá mostrando el chat
+			var $chat = $('#chat');
+			//almacena la ultima pareja con la que me conecté
+			var nick_ultPareja = ""	;
+			//almacena mi pareja actual
+			var nick_actPareja = "" ;
+			//sala de chat donde estoy
+			var room = null;
+			//boton siguiente
+			//var $siguiente = $('#botonSiguiente');
+			//boton iniciar
+			//var $iniciarChat = $('#botonIniciar');
+				
+			//cada vez que se haga un submit de un nick, lo enviaremos al servidor
+			$formUser.submit(function(e){				
 
+				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+				e.preventDefault();
 
-  <script>
-    
-    //funcion se ejecuta cuando toda la pagina termine de cargar
-    $(function(){
-      //variable para conectarse al socket
-      var socket = io.connect();
-      //form para enviar el nick
-      var $formUser = $('#nickForm');
-      //por si hay nick repetido
-      var $nickError = $('#nickError');
-      //el nick en si
-      var $nick = $('#nickName');
-      //usuarios
-      var $usuarios = $('#usuarios');
-      //form para enviar el mensaje 
-      var $formMensaje = $('#enviarMensaje');
-      //este es el input, el mensaje en si
-      var $mensaje = $('#mensaje');
-      //chat, es la variable donde se irá mostrando el chat
-      var $chat = $('#chat');
+				if($nick.val()==""){
+					//Validar un ingreso vacio.
+					window.alert("Debe ingresar nombre de usuario.");
+				}
+				else{
+					//emitimos un mensaje al servidor de que hay un nuevo usuario
+					socket.emit('nuevo usuario', $nick.val(), function(data){
+						//Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
+						if(data){
+							$('#nickIngreso').hide();//se oculta el registro
+							$('#salaChat').show();//se muestra la sala de chat	
+								//document.getElementById("enviarMensaje").disabled = true;		
+						}
+						//si no, se muestra el error y se solicita un nuevo ingreso de usuario
+						else{
+							//$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
+							window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
+						}
+					});
+					//Vaciamos el input donde se ingreso el nick
+					$nick.val('');
+				}
+			});
 
-      var nick_UltimaPareja = null;
-      //boton siguiente
-      //var $siguiente = $('#botonSiguiente');
-      //boton iniciar
-      //var $iniciarChat = $('#botonIniciar');
-        
-      //cada vez que se haga un submit de un nick, lo enviaremos al servidor
-      $formUser.submit(function(e){       
+			//Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
+			socket.on('nicks', function(data){
+				var html = '';
+				for(i=0; i<data.length; i++){
+					html += data[i]+'<br/>'
+				}
+				$usuarios.html(html); //se guardan en el apartado dejado para los usuarios en el html
 
-        //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
-        e.preventDefault();
+			});
 
-        if($nick.val()==""){
-          //Validar un ingreso vacio.
-          window.alert("Debe ingresar nombre de usuario.");
-        }
-        else{
-          //emitimos un mensaje al servidor de que hay un nuevo usuario
-          socket.emit('nuevo usuario', $nick.val(), function(data){
-            //Si se retorna true (este es el valor de callback desde el servidor) ingresamos al chat
-            if(data){
-              $('#nickIngreso').hide();//se oculta el registro
-              $('#salaChat').show();//se muestra la sala de chat  
-                //document.getElementById("enviarMensaje").disabled = true;   
-            }
-            //si no, se muestra el error y se solicita un nuevo ingreso de usuario
-            else{
-              //$nickError.html('Nombre de usuario ya existente, intente nuevamente.');
-              window.alert("Nombre de usuario ya existente.\n Intente nuevamente.");
-            }
-          });
-          //Vaciamos el input donde se ingreso el nick
-          $nick.val('');
-        }
-      });
+			// cada vez que se haga un submit de un mensaje, lo enviaremos al servidor
+			$formMensaje.submit(function(e){
 
-      //Respuesta al mensaje recibido desde el servidor, la cual muestra los usuarios en linea
-      socket.on('nicks', function(data){
-        var html = '';
-        for(i=0; i<data.length; i++){
-          html += data[i]+'<br/>'
-        }
-        $usuarios.html(html); //se guardan en el apartado dejado para los usuarios en el html
+				//Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
+				e.preventDefault();
 
-      });
+				//se emite un mensaje al servidor indicando el envio de un nuevo mensaje, se envia el mensaje tambien
+				socket.emit('enviar mensaje', $mensaje.val());				
+				//limpiamos el contenido ingresado
+				$mensaje.val('');
+			});
 
-      // cada vez que se haga un submit de un mensaje, lo enviaremos al servidor
-      $formMensaje.submit(function(e){
+			//se recibe un mensaje del servidor indicando que se recibe un nuevo mensaje
+			
+			socket.on('nuevo mensaje', function(data){
+				//se muestra el mensaje recibido en la ventana junto con el nich del usuario que lo envio
+				$chat.append('<b>'+data.nick+':</b>'+data.msg+"<br/>");
+			});
 
-        //Para evitar que se hagan refresh de la página, así solo enviamos el mensaje
-        e.preventDefault();
+			//si se hace click para iniciar la ruleta de chat
+			document.getElementById("botonIniciar").onclick = function(){
 
-        //se emite un mensaje al servidor indicando el envio de un nuevo mensaje, se envia el mensaje tambien
-        socket.emit('enviar mensaje', $mensaje.val());        
-        //limpiamos el contenido ingresado
-        $mensaje.val('');
-      });
+				socket.emit('nuevo chat', nick_ultPareja);		
+				//Previene errores deshabilitando funciones
+				document.getElementById("botonIniciar").disabled = true;
+				document.getElementById("botonParar").disabled = false;						
+				document.getElementById("botonSiguiente").disabled = false;
+				document.getElementById("sendmessage").disabled = false;
 
-      //se recibe un mensaje del servidor indicando que se recibe un nuevo mensaje
-      
-      socket.on('nuevo mensaje', function(data){
-        //se muestra el mensaje recibido en la ventana junto con el nich del usuario que lo envio
-        $chat.append('<b>'+data.nick+':</b>'+data.msg+"<br/>");
-      });
+				//Código de OPENTOK para publicar y suscribirse a la webcam y mic
+				//Variables para usar la API
+				  var apiKey = '45015762';
+			      var sessionId = '2_MX40NTAxNTc2Mn5-MTQxMjQ2NjU5MDM3NH5ud3AwR1Z1S09pSjBheXYxNzFtK0Y1dW5-fg'; 
+			      var token = 'T1==cGFydG5lcl9pZD00NTAxNTc2MiZzaWc9Mzc0Y2Y2ZGViMWFmZmRhMjM2ZTIwYzViYWYyOGVlODAxMjM1OTRiNTpyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME5UQXhOVGMyTW41LU1UUXhNalEyTmpVNU1ETTNOSDV1ZDNBd1IxWjFTMDlwU2pCaGVYWXhOekZ0SzBZMWRXNS1mZyZjcmVhdGVfdGltZT0xNDEyNTYyNjk4Jm5vbmNlPTAuMjU1ODkyOTA2MDcxODY4NDM=';
+			      //Crea la sesión
+			      var session = OT.initSession(apiKey, sessionId); 
+			      //Recibe stream
+			      session.on({ 
+			          streamCreated: function(event) { 
+			            session.subscribe(event.stream, 'subscribersDiv', {insertMode: 'append'}); 
+			          } 
+			      }); 
+			      //Publica recursos
+			      session.connect(token, function(error) {
+			        if (error) {
+			          console.log(error.message);
+			        } else {
+			          session.publish('myPublisherDiv', {width: 320, height: 240}); 
+			        }
+			      });
+			}
 
-      //si se hace click para iniciar la ruleta de chat
-      document.getElementById("botonIniciar").onclick = function(){
+			//si se hace click para parar la ruleta de chat
+			document.getElementById("botonParar").onclick = function(){
 
+				socket.emit('parar chat', nick_actPareja);
+				//Previene errores deshabilitando funciones
+				document.getElementById("botonIniciar").disabled = false;
+				document.getElementById("botonParar").disabled = true;
+				document.getElementById("botonSiguiente").disabled = true;
+				document.getElementById("sendmessage").disabled = true;
+			}
 
-        socket.emit('nuevo chat', nick_UltimaPareja, function(data){
+			//si se hace click para cambiar de pareja de chat
+			document.getElementById("botonSiguiente").onclick = function(){
 
-          if(data){
+				$chat.append('<b>'+"Cambiando de pareja"+'</b>'+'</br>');
 
-          }else{
+				socket.emit('desinscribe',nick_ultPareja);
+				socket.emit('nuevo chat', nick_ultPareja);
 
-          }
-        });
+				//Código de OPENTOK para publicar y suscribirse a la webcam y mic
+					//Copia textual de las lineas de la función ("botonIniciar").onClick() anterior
+				  var apiKey = '45015762';
+			      var sessionId = '2_MX40NTAxNTc2Mn5-MTQxMjQ2NjU5MDM3NH5ud3AwR1Z1S09pSjBheXYxNzFtK0Y1dW5-fg'; 
+			      var token = 'T1==cGFydG5lcl9pZD00NTAxNTc2MiZzaWc9Mzc0Y2Y2ZGViMWFmZmRhMjM2ZTIwYzViYWYyOGVlODAxMjM1OTRiNTpyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME5UQXhOVGMyTW41LU1UUXhNalEyTmpVNU1ETTNOSDV1ZDNBd1IxWjFTMDlwU2pCaGVYWXhOekZ0SzBZMWRXNS1mZyZjcmVhdGVfdGltZT0xNDEyNTYyNjk4Jm5vbmNlPTAuMjU1ODkyOTA2MDcxODY4NDM=';
+			      var session = OT.initSession(apiKey, sessionId); 
+			      session.on({ 
+			          streamCreated: function(event) { 
+			            session.subscribe(event.stream, 'subscribersDiv', {insertMode: 'append'}); 
+			          } 
+			      }); 
+			      session.connect(token, function(error) {
+			        if (error) {
+			          console.log(error.message);
+			        } else {
+			          session.publish('myPublisherDiv', {width: 320, height: 240}); 
+			        }
+			      });								
+			}
 
-        document.getElementById("botonIniciar").disabled = true;
-        document.getElementById("botonParar").disabled = false;
-        document.getElementById("botonSiguiente").disabled = false;
-      }
+			socket.on('pareja encontrada', function(data){
 
-      //si se hace click para parar la ruleta de chat
-      document.getElementById("botonParar").onclick = function(){
+				$chat.val('');
 
-        socket.emit('parar chat');
+				$chat.append('<b>'+"Nuevo chat iniciado"+'<b>'+'</br>');
+				$chat.append('<b>'+"Estas chateando con: "+data+'<b>'+'</br>');
+				nick_ultPareja = data;
+				nick_actPareja = data;
+			});
 
-        document.getElementById("botonIniciar").disabled = false;
-        document.getElementById("botonParar").disabled = true;
-        document.getElementById("botonSiguiente").disabled = true;
-      }
-      //si se hace click para cambiar de pareja de chat
-      document.getElementById("botonSiguiente").onclick = function(){
+			socket.on('pareja esperando', function(data){
 
-        socket.emit('cambiar chat');
+				$chat.append('<b>'+"No hay personas con quien conectarse"+'</b>'+'</br>');				
+			});
 
-      }
+			socket.on('pareja cambio', function(data){
+				$formMensaje.val('');
+				$chat.append('<b>'+"Tu pareja ha cambiado de chat"+'/<b>'+'</br>');
+				nick_actPareja = "";
 
-      socket.on('listo chat', function(data){
-        $chat.append("Nuevo chat iniciado.\n");
-      });
-    });   
-  </script>
+				socket.emit('nuevo chat', nick_ultPareja);
+			});
+			socket.on('pareja abandono', function(data){
+				nick_actPareja = "";
+				$chat.append('<b>'+"Tu pareja ha abandonado el chat"+'/<b>'+'</br>');
+
+				socket.emit('nuevo chat', nick_ultPareja);
+			});
+		});		
+	</script>
+	<!-- Codigo opentok para publicar y suscribirse -->
 </body>
 </html>
