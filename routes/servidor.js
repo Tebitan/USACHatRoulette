@@ -84,7 +84,7 @@ exports.start = function(http){
 			if(rooms_sinPareja.indexOf(socket)!= -1){//si estaba esperando pareja
 			rooms_sinPareja.splice(rooms_sinPareja.indexOf(socket),1);//me quito de la lista
 			}
-			if(data != "" ){
+			if(data != ""){
 
 				socket.pareja.emit('pareja abandono', data);
 			}
